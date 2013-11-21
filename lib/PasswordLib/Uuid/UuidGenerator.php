@@ -36,6 +36,16 @@ class UuidGenerator {
     const UUID_VERSION_4 = 0x40;
 
     /**
+     * A list of integers that correspond to the indices where the hyphens (-)
+     * are expected to be present in a formatted UUID.
+     *
+     * Notice that the indices are zero-based.
+     *
+     * @var int[]
+     */
+    protected static $separatorsIdxs = array(8, 12, 16, 20);
+
+    /**
      * The size of the UUID in bytes.
      *
      * @var int
@@ -123,7 +133,7 @@ class UuidGenerator {
         $this->setVariantToUUID($bytes);
         $hexString = $this->getHexadecimalOf($bytes);
 
-        return $this->formatUUID($hexString);
+        return $this->formatUuid($hexString);
     }
 
     /**
@@ -168,6 +178,15 @@ class UuidGenerator {
      * Formats the hexadecimal representation of a UUID to the official form as
      * described in [RFC 4122][1].
      *
+     * The algorithm used can be described by the following code:
+     *
+     *      $uuid = substr($hexString, 0, 8) . '-'
+     *          . substr($hexString, 8, 4) . '-'
+     *          . substr($hexString, 12, 4) . '-'
+     *          . substr($hexString, 16, 4) . '-'
+     *          . substr($hexString, 20);
+     *
+     *
      * [1]: http://tools.ietf.org/html/rfc4122
      *      "RFC 4122: A Universally Unique IDentifier (UUID) URN Namespace"
      *
@@ -176,12 +195,15 @@ class UuidGenerator {
      * @return string The string representation of the UUID in the official
      * format.
      */
-    protected function formatUUID($hexString) {
-        $uuid = substr($hexString, 0, 8) . '-'
-            . substr($hexString, 8, 4) . '-'
-            . substr($hexString, 12, 4) . '-'
-            . substr($hexString, 16, 4) . '-'
-            . substr($hexString, 20);
+    protected function formatUuid($hexString) {
+        $uuid = '';
+        $lastIdx = 0;
+        foreach (static::$separatorsIdxs as $sepIdx) {
+            $numOfCharsToCut = $sepIdx - $lastIdx;
+            $uuid .= substr($hexString, $lastIdx, $numOfCharsToCut) . '-';
+            $lastIdx = $sepIdx;
+        }
+        $uuid .= substr($hexString, $lastIdx);
 
         return $uuid;
     }
