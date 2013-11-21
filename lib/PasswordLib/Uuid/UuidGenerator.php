@@ -119,8 +119,6 @@ class UuidGenerator {
      *      "Lazy Loading | Wikipedia"
      *
      * @return string The new version 4 UUID.
-     * @throws UuidGenerationException if any error occurs while generating the
-     * UUID.
      */
     public function generateVersion4Uuid() {
         if ($this->rng === null) {
