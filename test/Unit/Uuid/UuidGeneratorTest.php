@@ -78,7 +78,7 @@ class Unit_Uuid_UuidGeneratorTest extends PHPUnit_Framework_TestCase {
      *
      * [1]: http://tinyurl.com/3znd239 "Version 4 UUID"
      */
-    function testGenerateVersion4UUIDForValidity() {
+    function testGenerateVersion4UuidForValidity() {
         $uuid = $this->uuidGenerator->generateVersion4UUID();
         $pattern = "/^" . static::$hexCharPattern . "{8}-"
             . static::$hexCharPattern . "{4}-"
